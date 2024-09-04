@@ -1,7 +1,7 @@
 Repository Purpose: This repository is dedicated to learning about AI agency, based on the "Fullstack GPT" course by Nomad Coders.
 
 Base Language: Python
-Environment : Windows, CURSOR(Code Editor), python virtual environment
+Environment : Windows, VSC(will change CUSOR), python virtual environment
 Packages Used: Langchain, GPT-4, Whisper, FastAPI, Streamlit, Pinecone, Hugging Face
 Developing AI Web Services (Agencies): DocumentGPT, PrivateGPT, QuizGPT, SiteGPT, MeetingGPT, InvestorGPT
 Developing ChatGPT Plugin: ChefGPT
