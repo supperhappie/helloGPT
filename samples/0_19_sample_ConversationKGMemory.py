@@ -1,7 +1,7 @@
 from langchain.memory import ConversationKGMemory
 from langchain.chat_models import ChatOpenAI
 from langchain.callbacks import get_openai_callback
-from utils.utils import Utils
+from utils import Utils
 
 utils = Utils()
 llm = ChatOpenAI(model="gpt-4o-mini", temperature= 0.1)

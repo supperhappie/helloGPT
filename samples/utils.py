@@ -78,6 +78,7 @@ class Utils:
             print(out)
             print("-" * 100)
             print(usage)
+        return out
             
     def get_current_path(self):
         """Return the current working directory."""
