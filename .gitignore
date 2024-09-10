@@ -3,3 +3,7 @@ env/
 notebook.ipynb
 .db
 .json
+tmp.py
+.cache
+.cache/
+__pycache__/
