@@ -19,7 +19,7 @@ splitter = CharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=600,
     chunk_overlap=100,
 )
-loader = UnstructuredFileLoader("./files/sample_1.pdf")
+loader = UnstructuredFileLoader("./samples_langchain/files/sample_1.pdf")
 docs = loader.load_and_split(text_splitter=splitter)
 
 vectorstore = FAISS.from_documents(docs, cached_embeddings)

@@ -7,3 +7,5 @@ tmp.py
 .cache
 .cache/
 __pycache__/
+.streamlit
+cache.db

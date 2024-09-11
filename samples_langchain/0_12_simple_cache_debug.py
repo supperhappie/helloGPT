@@ -13,4 +13,5 @@ chat = ChatOpenAI(model="gpt-4o-mini",
 set_llm_cache(SQLiteCache("cache.db")) 
 set_debug(True)
 
-chat.predict("How do you make italian pasta. short response.")
+chat.predict("How do you make Maxico pasta. short response.")
+chat.predict("How do you make Maxico pasta. short response.")

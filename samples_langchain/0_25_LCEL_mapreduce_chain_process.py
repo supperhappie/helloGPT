@@ -6,6 +6,12 @@ from langchain.vectorstores import FAISS
 from langchain.storage import LocalFileStore
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough, RunnableLambda
+
+# from utils import Utils
+import sys
+import os
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
 from utils import Utils
 
 llm = ChatOpenAI(temperature=0.1, model="gpt-3.5-turbo")
@@ -19,7 +25,8 @@ splitter = CharacterTextSplitter.from_tiktoken_encoder(
     chunk_size=600,
     chunk_overlap=100,
 )
-loader = UnstructuredFileLoader("./files/sample_1.pdf")
+loader = UnstructuredFileLoader("./samples_langchain/files/sample_1.pdf")
+print(loader.load())
 docs = loader.load_and_split(text_splitter=splitter)
 
 vectorstore = FAISS.from_documents(docs, cached_embeddings)
