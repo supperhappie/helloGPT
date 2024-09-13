@@ -41,6 +41,7 @@ with st.sidebar:
 
 if st.session_state.docs:
     st.write(f"Number of documents: {len(st.session_state.docs)}")
+    st.write("---")  # Add separator
     for i, doc in enumerate(st.session_state.docs):
         st.write(f"Document {i+1}:")
         st.write(doc.page_content)
