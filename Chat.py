@@ -1,7 +1,7 @@
 from typing import List, Any
 from langchain.schema import Document
 from langchain.prompts import PromptTemplate
-from LangChainUtilities import LangChainUtilities
+from langchain_utilities import LangChainUtilities
 import streamlit as st
 
 class Chat:

@@ -13,7 +13,7 @@ chat = ChatOpenAI(openai_api_key=openai_api_key, model="gpt-4o-mini")
 request = "How many planet are there?"
 
 out_OpenAI = llm.predict(request)
-out_chatOpenAI = chat.predict(request)
+# out_chatOpenAI = chat.predict(request)
 
 print('request : ' + request)
 print("-"*20)

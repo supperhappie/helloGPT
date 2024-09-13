@@ -55,7 +55,7 @@ def paint_history():
         
 @st.cache_data(show_spinner=False)
 def cached_chain_invoke(file, _retriever, _llm, message, _prompt):
-    return Utils.chain_invoke_stuff(_retriever, _llm, message, _prompt) 
+    return Utils.chain_invoke_stuff(retriever=_retriever, llm=_llm, message=message, prompt=_prompt)
     
 
 # Call the global configuration

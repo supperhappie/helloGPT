@@ -15,6 +15,18 @@ import streamlit as st
 
 import os
 import time
+import torch
+
+
+# [ import-guide using relative path ]
+# import sys, os, importlib
+# print(os.getcwd()) # check current path 
+# parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '{relative path}')) # {relative path} should change as relative path 
+# sys.path.append(parent_dir)
+# import langchain_utilities
+# importlib.reload(langchain_utilities)
+# from langchain_utilities import LangChainUtilities
+
 
 class LangChainUtilities:
     cache_enabled = False
@@ -106,14 +118,24 @@ class LangChainUtilities:
     @staticmethod
     def get_chat_mistral(streaming=False, temperature=0.1):
         """Get mistral model using ollama api. Optionally enable streaming output."""
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # [AVAILABLE_TOOLS] [{"type": "function", "function": {"name": "get_current_weather", "description": "Get the current weather", "parameters": {"type": "object", "properties": {"location": {"type": "string", "description": "The city and state, e.g. San Francisco, CA"}, "format": {"type": "string", "enum": ["celsius", "fahrenheit"], "description": "The temperature unit to use. Infer this from the users location."}}, "required": ["location", "format"]}}}][/AVAILABLE_TOOLS]
         chat = ChatOllama(
             model="mistral",
             temperature=temperature,
-            streaming=streaming,
+            streaming=streaming,            
             callbacks=[StreamingStdOutCallbackHandler()] if streaming else None,
+            device = device,
+            # 생성 부분 추가
+            generation_kwargs={
+                "max_tokens": 4096,                 #max_tokens: 생성할 최대 토큰 수를 4096으로 설정합니다.
+                "top_p": 0.95,                      #top_p: 누적 확률 분포에서 상위 95%의 토큰만 고려합니다.
+                "top_k": 50,                        #top_k: 각 단계에서 가장 가능성 있는 50개의 토큰만 고려합니다.
+                "repeat_penalty": 1.1,              #repeat_penalty: 반복을 피하기 위해 이미 생성된 토큰에 1.1의 페널티를 적용합니다.
+                "stop": ["[INST]", "[/INST]"],      #stop: "[INST]"와 "[/INST]"를 만나면 생성을 중지합니다.
+            }
         )
         return chat
-    
     @staticmethod
     def get_chat_gpt_4o_mini(streaming=False, temperature=0.1):
         """Get GPT-4o-mini model. Optionally enable streaming output."""
@@ -224,9 +246,27 @@ class LangChainUtilities:
             ]
         )
         return prompt
+    @staticmethod
+    def get_chain(message=None, prompt=None, llm=None):
+        if LangChainUtilities.verbose_enabled:
+            print("chain_invoke")
+        if llm is None:
+            print("오류: llm은 반드시 제공되어야 합니다.")
+            return None
+        if message:
+            if prompt:
+                chain = message | prompt | llm
+            else:
+                chain = message | llm
+        else:
+            if prompt:
+                chain = prompt | llm
+            else:
+                chain = llm
+        return chain
     
     @staticmethod
-    def chain_invoke_stuff(retriever, llm, message, prompt):
+    def chain_invoke_stuff(retriever, message, prompt, llm):
         if LangChainUtilities.verbose_enabled:
             print("chain_invoke_stuff")
         chain = (

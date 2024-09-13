@@ -25,3 +25,4 @@ out_chain = chain.invoke({
 })
 
 print(out_chain)
+print(type(out_chain))
