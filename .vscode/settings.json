@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "cache for helloGPT",
+            "database": "${workspaceFolder:helloGPT}/cache.db"
+        }
+    ]
+}
