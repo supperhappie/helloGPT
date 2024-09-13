@@ -1,11 +1,11 @@
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, ChatOllama
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 from langchain.callbacks import StreamingStdOutCallbackHandler
 from langchain.globals import set_llm_cache, set_debug
 from langchain.cache import InMemoryCache, SQLiteCache
 from langchain.document_loaders import UnstructuredFileLoader
-from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings
+from langchain.embeddings import CacheBackedEmbeddings, OpenAIEmbeddings, OllamaEmbeddings
 from langchain.storage import LocalFileStore
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores.faiss import FAISS
@@ -30,7 +30,8 @@ class Utils:
     debug_enabled = False
     cache_type = None  # None, 'inmemory', or 'sqlite'
     cache_path = "cache.db"  # Default SQLite cache path
-
+    embedding_model = {"embedding":OllamaEmbeddings(model="mistral"), "model":"mistral"}  # Store the embedding model
+    
     @staticmethod
     def enable_cache(cache_type='sqlite', cache_path=None):
         """Enable caching with either InMemoryCache or SQLiteCache."""
@@ -67,6 +68,35 @@ class Utils:
         set_debug(False)
         print("Debugging disabled.")
 
+    @staticmethod
+    def set_embedding_model(model_name: str = "mistral"):
+        """Set the embedding model based on input string.
+        Default is 'mistral'. Supported models are 'mistral' and 'chatopenai'.
+        """
+        supported_models = ['mistral', 'chatopenai']
+        
+        Utils.embedding_model["model"] = model_name
+        if model_name.lower() == 'mistral':
+            Utils.embedding_model["embedding"] = OllamaEmbeddings(model="mistral")
+        elif model_name.lower() == 'chatopenai':
+            Utils.embedding_model["embedding"] = OpenAIEmbeddings()
+        else:
+            print(f"{model_name} is not supported. Supported list is {supported_models}")
+            Utils.embedding_model["embedding"] = OllamaEmbeddings(model="mistral")  # Default to mistral
+
+        print(f"Embedding model set to: {Utils.embedding_model['model']}")
+        
+    @staticmethod
+    def get_chat_mistral(streaming=False):
+        """Get mistral model using ollama api. Optionally enable streaming output."""
+        chat = ChatOllama(
+            model="mistral",
+            temperature=0.1,
+            streaming=streaming,
+            callbacks=[StreamingStdOutCallbackHandler()] if streaming else None,
+        )
+        return chat
+    
     @staticmethod
     def get_chat_gpt_4o_mini(streaming=False):
         """Get GPT-4o-mini model. Optionally enable streaming output."""
@@ -129,15 +159,15 @@ class Utils:
     @st.cache_data(show_spinner="Embedding file...")
     @staticmethod
     def embed_file(file):
-        print("run. embed_file")
-        file_path = f"./.cache/files/{file.name}"
+        print(f"run. embed_file (model : {Utils.embedding_model['model']})")
+        file_path = f"./.cache/{Utils.embedding_model['model']}/files/{file.name}"
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         with open(file_path, "wb") as f:
             f.write(file.read())
-        cache_dir = LocalFileStore(f"./.cache/embeddings/{file.name}")
-        embeddings = OpenAIEmbeddings()
-        cached_embeddings = CacheBackedEmbeddings.from_bytes_store(embeddings, cache_dir)
+        cache_dir = LocalFileStore(f"./.cache/{Utils.embedding_model['model']}/embeddings/{file.name}")        
+        
+        cached_embeddings = CacheBackedEmbeddings.from_bytes_store(Utils.embedding_model["embedding"], cache_dir)
         
         splitter = CharacterTextSplitter.from_tiktoken_encoder(
             separator="\n",
@@ -182,7 +212,7 @@ class Utils:
     @staticmethod
     def chain_invoke_stuff(retriever, llm, message, prompt):
         print("chain_invoke_stuff")
-        chain = chain = (
+        chain = (
             {
                 "context": retriever | RunnableLambda(Utils.format_docs),
                 "question": RunnablePassthrough(),
