@@ -9,3 +9,4 @@ tmp.py
 __pycache__/
 .streamlit
 cache.db
+*.mp3
