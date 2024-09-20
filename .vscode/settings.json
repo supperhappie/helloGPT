@@ -5,6 +5,12 @@
             "driver": "SQLite",
             "name": "cache for helloGPT",
             "database": "${workspaceFolder:helloGPT}/cache.db"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "movie",
+            "database": "${workspaceFolder:helloGPT}/movies.sqlite"
         }
     ]
 }

@@ -10,3 +10,4 @@ __pycache__/
 .streamlit
 cache.db
 *.mp3
+*.mp4

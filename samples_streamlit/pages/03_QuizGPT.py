@@ -5,8 +5,8 @@ from header import set_header
 import sys, os, importlib
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 sys.path.append(parent_dir)
-import LangChainUtilities
-importlib.reload(LangChainUtilities)
+import langchain_utilities
+importlib.reload(langchain_utilities)
 from langchain_utilities import LangChainUtilities
 
 set_header()
